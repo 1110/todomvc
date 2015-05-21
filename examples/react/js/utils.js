@@ -4,6 +4,9 @@ var app = app || {};
 	'use strict';
 
 	app.Utils = {
+		/*
+		 * 生成ID
+		 */
 		uuid: function () {
 			/*jshint bitwise:false */
 			var i, random;
@@ -25,6 +28,9 @@ var app = app || {};
 			return count === 1 ? word : word + 's';
 		},
 
+		/*
+		 * 带参数data存数据，不带参数data是写数据
+		 */
 		store: function (namespace, data) {
 			if (data) {
 				return localStorage.setItem(namespace, JSON.stringify(data));
@@ -34,6 +40,7 @@ var app = app || {};
 			return (store && JSON.parse(store)) || [];
 		},
 
+		//替换对象的值，传的参数arguments
 		extend: function () {
 			var newObj = {};
 			for (var i = 0; i < arguments.length; i++) {

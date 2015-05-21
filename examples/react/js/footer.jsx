@@ -24,6 +24,8 @@ var app = app || {};
 			}
 
 			// React idiom for shortcutting to `classSet` since it'll be used often
+			// classSet()是一个简洁的工具，用于简单操作DOM中的class字符串 
+			// 参考：http://wiki.jikexueyuan.com/project/react/class-name-manipulation.html
 			var cx = React.addons.classSet;
 			var nowShowing = this.props.nowShowing;
 			return (

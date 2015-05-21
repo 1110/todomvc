@@ -16,16 +16,28 @@ var app = app || {};
 
 	var ENTER_KEY = 13;
 
+	/*
+	 * TodoApp 标签
+	 */
 	var TodoApp = React.createClass({
+
+		/*
+		 * 初始化
+		 */
 		getInitialState: function () {
 			return {
+				/* 默认显示所有todo */
 				nowShowing: app.ALL_TODOS,
 				editing: null
 			};
 		},
 
+		/*
+		 * 在初始化渲染执行之后立刻调用一次
+		 */
 		componentDidMount: function () {
 			var setState = this.setState;
+			/* 路由规则 */
 			var router = Router({
 				'/': setState.bind(this, {nowShowing: app.ALL_TODOS}),
 				'/active': setState.bind(this, {nowShowing: app.ACTIVE_TODOS}),
@@ -34,6 +46,9 @@ var app = app || {};
 			router.init('/');
 		},
 
+		/*
+		 * 添加新的todo
+		 */
 		handleNewTodoKeyDown: function (event) {
 			if (event.which !== ENTER_KEY) {
 				return;
@@ -41,6 +56,7 @@ var app = app || {};
 
 			event.preventDefault();
 
+			//获取input框的值
 			var val = this.refs.newField.getDOMNode().value.trim();
 
 			if (val) {
@@ -49,32 +65,53 @@ var app = app || {};
 			}
 		},
 
+		/*
+		 * 选择所有为已完成/未完成
+		 */
 		toggleAll: function (event) {
 			var checked = event.target.checked;
 			this.props.model.toggleAll(checked);
 		},
 
+		/*
+		 * 标记为已完成/未完成
+		 */
 		toggle: function (todoToToggle) {
 			this.props.model.toggle(todoToToggle);
 		},
 
+		/*
+		 * 保存
+		 */
 		destroy: function (todo) {
 			this.props.model.destroy(todo);
 		},
 
+		/*
+		 * 编辑
+		 */
 		edit: function (todo) {
 			this.setState({editing: todo.id});
 		},
 
+		/*
+		 * 保存
+		 */
 		save: function (todoToSave, text) {
 			this.props.model.save(todoToSave, text);
 			this.setState({editing: null});
 		},
 
+		/*
+		 * 编辑状态的取消
+		 */
 		cancel: function () {
 			this.setState({editing: null});
 		},
 
+		/*
+		 * 清除已经完成的todo
+		 */
 		clearCompleted: function () {
 			this.props.model.clearCompleted();
 		},
@@ -82,6 +119,8 @@ var app = app || {};
 		render: function () {
 			var footer;
 			var main;
+
+			//读取本地缓存的todo数据
 			var todos = this.props.model.todos;
 
 			var shownTodos = todos.filter(function (todo) {
@@ -95,6 +134,9 @@ var app = app || {};
 				}
 			}, this);
 
+			/*
+			 * todo 列表, 调用todoitem.jsx
+			 */
 			var todoItems = shownTodos.map(function (todo) {
 				return (
 					<TodoItem
@@ -110,10 +152,16 @@ var app = app || {};
 				);
 			}, this);
 
+			/*
+			 * 激活的 todo 数量
+			 */ 
 			var activeTodoCount = todos.reduce(function (accum, todo) {
 				return todo.completed ? accum : accum + 1;
 			}, 0);
 
+			/*
+			 * 已经完成的todo 数量
+			 */
 			var completedCount = todos.length - activeTodoCount;
 
 			if (activeTodoCount || completedCount) {
@@ -126,6 +174,10 @@ var app = app || {};
 					/>;
 			}
 
+			/*
+			 * todo 列表，有todo数据的时候才出现
+			 * 带有全选为已完成
+			 */
 			if (todos.length) {
 				main = (
 					<section id="main">
@@ -142,6 +194,9 @@ var app = app || {};
 				);
 			}
 
+			/*
+			 * TodoApp 页面实现
+			 */
 			return (
 				<div>
 					<header id="header">
@@ -161,8 +216,14 @@ var app = app || {};
 		}
 	});
 
+	/*
+	 * model
+	 */
 	var model = new app.TodoModel('react-todos');
 
+	/*
+	 * 首页渲染
+	 */
 	function render() {
 		React.render(
 			<TodoApp model={model}/>,
@@ -170,6 +231,9 @@ var app = app || {};
 		);
 	}
 
+	/*
+	 * 订阅事件
+	 */
 	model.subscribe(render);
 	render();
 })();

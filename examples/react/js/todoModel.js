@@ -19,15 +19,25 @@ var app = app || {};
 		this.onChanges = [];
 	};
 
+	/*
+	 * 订阅事件
+	 */
 	app.TodoModel.prototype.subscribe = function (onChange) {
 		this.onChanges.push(onChange);
 	};
 
+	/*
+	 * 更新todo，执行添加到 onChanges 的方法
+	 * 这里onChanges 只有一个渲染整个页面的方法 render
+	 */
 	app.TodoModel.prototype.inform = function () {
 		Utils.store(this.key, this.todos);
 		this.onChanges.forEach(function (cb) { cb(); });
 	};
 
+	/*
+	 * 添加新的todo
+	 */
 	app.TodoModel.prototype.addTodo = function (title) {
 		this.todos = this.todos.concat({
 			id: Utils.uuid(),
@@ -50,6 +60,9 @@ var app = app || {};
 		this.inform();
 	};
 
+	/*
+	 * 标记为已完成/未完成
+	 */
 	app.TodoModel.prototype.toggle = function (todoToToggle) {
 		this.todos = this.todos.map(function (todo) {
 			return todo !== todoToToggle ?
@@ -60,6 +73,9 @@ var app = app || {};
 		this.inform();
 	};
 
+	/*
+	 * 销毁
+	 */
 	app.TodoModel.prototype.destroy = function (todo) {
 		this.todos = this.todos.filter(function (candidate) {
 			return candidate !== todo;
@@ -68,6 +84,9 @@ var app = app || {};
 		this.inform();
 	};
 
+	/*
+	 * 保存
+	 */
 	app.TodoModel.prototype.save = function (todoToSave, text) {
 		this.todos = this.todos.map(function (todo) {
 			return todo !== todoToSave ? todo : Utils.extend({}, todo, {title: text});
@@ -76,6 +95,9 @@ var app = app || {};
 		this.inform();
 	};
 
+	/*
+	 * 清除已完成的todos
+	 */
 	app.TodoModel.prototype.clearCompleted = function () {
 		this.todos = this.todos.filter(function (todo) {
 			return !todo.completed;
